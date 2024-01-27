@@ -1,0 +1,151 @@
+{% extends 'member/base/base.html' %}
+
+{% block custom_head %}
+<style>
+    .hint {
+        color: #c82525;
+        font-size: small;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href=".">
+            <img src="/static/logo.png">
+            <span>Ricky's Signup</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="container-ele">
+        Sign Up
+    </h1>
+
+    <div class="container-ele input-div">
+        <span>User Name</span>
+        <input type="text" id="username" placeholder="Combination of uppercase and lowercase letters and numbers">
+    </div>
+
+    <div class="container-ele input-div">
+        <span>Email</span>
+        <input type="text" id="email" placeholder="mail@example.com">
+    </div>
+
+    <div class="container-ele input-div">
+        <span>Password</span>
+
+        <span class="hint">
+            At least 7 character. Combination of uppercase and lowercase letters, symbols and numbers.
+        </span>
+        <input type="password" id="pass1" placeholder="Follow hint above.">
+    </div>
+
+    <div class="container-ele input-div">
+        <span>Password(Again)</span>
+        <input type="password" id="pass2" placeholder="Again">
+    </div>
+
+    <button class="container-ele btn btn-outline-light action-btn" onclick="signup()">Sign Up</button>
+
+    <hr />
+
+    <a class="container-ele btn btn-outline-light third-login-method" href="/member/google/">
+        <img src="/static/member/image/googleg_standard_color_128dp.png" />
+        <span>Continue With Google</span>
+    </a>
+
+    <span>or</span>
+
+    <a class="container-ele btn btn-outline-light third-login-method" href="/member/login/">
+        <span>Log In</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block custom_body %}
+<script>
+    let signup = function () {
+        let spk_client = document.getElementById("spk_client").value;
+
+        let username = document.getElementById("username").value;
+        let email = document.getElementById("email").value;
+        let pass1 = document.getElementById("pass1").value;
+        let pass2 = document.getElementById("pass2").value;
+
+        if (!username | !email | !pass1 | !pass2) {
+            alert("All fields required!");
+        } else if (pass1 != pass2) {
+            alert("Password not correspond!");
+        } else {
+            data = {
+                "username": cInfo(username, spk_client),
+                "email": cInfo(email, spk_client),
+                "pass": cInfo(pass1, spk_client)
+            }
+
+            console.log(data)
+
+            const request = new Request(
+                '.',
+                {
+                    body: JSON.stringify(data),
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    method: 'POST',
+                    mode: 'cors',
+                    redirect: 'follow',
+                }
+            );
+
+            fetch(request)
+                .then(response => {
+                    console.log(response)
+                    if (response.redirected === true) {
+                        location.href = response.url;
+
+                        return;
+                    } else {
+                        if (!response.ok) {
+                            info = {
+                                "status": response.status,
+                                "body": response.json()
+                            }
+
+                            return Promise.reject(info);
+                        }
+
+                        return response.json();
+                    }
+                }).then(response => {
+                    console.log(response);
+                    alert("Sign up success! Please login.")
+
+                    window.location.href = "/member/login/"
+                }).catch(function (error) {
+                    console.log(error);
+
+                    error.body.then((err) => {
+                        alert("Sign up fail! " + err.message);
+                    })
+                }).catch(function (error) {
+                    console.log(error);
+                    alert("Sign up fail!");
+                });
+        }
+    }
+</script>
+{% endblock %}

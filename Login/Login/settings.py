@@ -70,6 +70,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Login.wsgi.application'
 
+DBHOST = 'localhost'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -78,8 +80,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mylogin',
-        'USER': 'root',
-        'PASSWORD': 'pw',
+        'USER': 'user',
+        'PASSWORD': 'userpw',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
@@ -88,6 +90,7 @@ DATABASES = {
     }
 }
 
+MONGO = f"mongodb://user:password@{DBHOST}:27017/?authMechanism=SCRAM-SHA-256"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -117,8 +120,6 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -147,3 +148,16 @@ CACHES = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 30 * 60
+
+
+GOOGLE_SERECT = 'RickyLogin/client_secret.json'
+GOOGLE_SCOPES = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'openid'
+]
+GOOGLE_REDIRECT_URI = 'http://127.0.0.1:8000/member/google/callback/'
+API_SERVICE_NAME = 'oauth2'
+API_VERSION = 'v2'
+
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1' if DEBUG else '0'
